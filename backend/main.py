@@ -519,11 +519,10 @@ async def stock(symbol: str):
     return await get_detail(symbol)
 
 
-# ---------------------------DO NOT EDIT CODE BELOW THIS LINE---------------------------------
-# This is the entry point for the FastAPI application.
+# ------------------------------------------------------------------ 入口
 if __name__ == "__main__":
-    port = int(os.environ.get("_BYTEFAAS_RUNTIME_PORT", 8000))
+    port = int(os.environ.get("PORT", 8000))
     config = uvicorn.Config("main:app", port=port, log_level="info", host=None)
     server = uvicorn.Server(config)
     server.run()
-# --------------------------------------------------------------------------------------------
+

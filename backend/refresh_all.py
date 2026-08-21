@@ -6,7 +6,8 @@
 
 之后再执行 deploy_frontend 部署 sentiment-lab/frontend 即可（建议 stable_domain=true）。
 
-数据源用 yfinance MCP 脚本（走服务端代理，不受 Yahoo 对沙箱 IP 的 429 限流影响）。
+数据源优先用 yfinance 包（pip install yfinance）；若环境里存在内部 yfinance 代理脚本
+（inner_skills/yfinance/...），则回落到该脚本，便于在受限网络中使用。
 """
 import datetime as dt
 import glob
@@ -29,6 +30,32 @@ SYMBOLS = ["SPY", "QQQ", "SOXX", "TSM", "NVDA", "SKHY", "AVGO", "ANET", "MU",
 SOURCE = {"SKHY": "000660.KS"}
 BATCH = 4
 LOOKBACK_DAYS = 400          # 只需补最近增量，历史由快照提供
+
+
+def fetch_yf(tickers, start, end):
+    """用 yfinance 包拉日线，返回 {ticker: [{date,open,high,low,close,volume}, ...]}。"""
+    try:
+        import yfinance as yf
+    except ImportError:
+        return None
+    out = {}
+    for t in tickers:
+        try:
+            df = yf.Ticker(t).history(start=start, end=end, interval="1d",
+                                      auto_adjust=False)
+        except Exception as exc:                              # noqa: BLE001
+            print("  !! {} 拉取失败：{}".format(t, exc))
+            continue
+        rows = []
+        for ts, r in df.iterrows():
+            if r.get("Close") is None:
+                continue
+            rows.append({"date": ts.strftime("%Y-%m-%d"), "open": r["Open"],
+                         "high": r["High"], "low": r["Low"], "close": r["Close"],
+                         "volume": r.get("Volume") or 0})
+        if rows:
+            out[t.upper()] = rows
+    return out or None
 
 
 def call_mcp(tickers, start, end):
@@ -82,7 +109,13 @@ def main():
     back = {v: k for k, v in SOURCE.items()}
 
     got = {}
-    for i in range(0, len(fetch_list), BATCH):
+    yfres = fetch_yf(fetch_list, start, end)
+    if yfres:
+        for k, v in yfres.items():
+            got[back.get(k, k)] = v
+        print("[yfinance] 取到 {} 个标的\n".format(len(got)))
+
+    for i in range(0, len(fetch_list), BATCH) if not got else []:
         batch = fetch_list[i:i + BATCH]
         print("[MCP] " + " ".join(batch))
         try:
@@ -98,7 +131,8 @@ def main():
                 got[back.get(key, key)] = rows
 
     if not got:
-        print("\n!! 所有批次都失败，快照保持不变，仍会用现有数据重算。")
+        print("\n!! 未取到任何行情（yfinance 未安装且内部代理不可用），"
+              "快照保持不变，仍会用现有数据重算。")
 
     print()
     stale = []

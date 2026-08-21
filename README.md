@@ -81,8 +81,18 @@ cd backend && python3 build_static.py
 cd backend && pip install -r requirements.txt && python3 main.py
 ```
 
-数据更新脚本 `refresh_all.py` 默认依赖内部 yfinance 代理；对外可替换为 `yfinance` 包直接拉取
-（把 `call_mcp()` 换成 `yfinance.download()` 即可，接口字段与 `merge()` 保持一致）。
+每日增量更新（优先用 `yfinance` 包，失败才回落到代理脚本）：
+
+```bash
+pip install yfinance
+cd backend && python3 refresh_all.py     # 拉最近 400 天 → 合并快照 → 重算 frontend/data
+```
+
+新增标的时先全量建快照：
+
+```bash
+cd backend && python3 bootstrap_snapshot.py <yfinance导出的json> [--map 000660.KS=SKHY]
+```
 
 ## 免责声明
 

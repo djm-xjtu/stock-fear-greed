@@ -1,8 +1,7 @@
 """把情绪指数结果预计算成静态 JSON，随前端一起部署。
 
-动机：FaaS 后端域名（*.cn-east-fn.bytedance.net）是内网域名，用户浏览器无法直连，
-表现为请求挂起 + Provisional headers are shown + Failed to fetch。
-静态化后页面零后端依赖，任何网络都能打开。
+动机：把所有计算结果预先算好，页面零后端依赖 —— 任何静态托管（GitHub Pages、
+对象存储、CDN）都能直接跑，也避免部署环境的网络可达性问题。
 """
 import json
 import os
