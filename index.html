@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>个股情绪指数 · Multi-Factor Fear &amp; Greed</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='24' font-size='24'%3E%F0%9F%A7%AD%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="aurora"><span></span><span></span><span></span></div>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 17l5-6 4 3 5-8 4 5"/><circle cx="8" cy="11" r="1.6" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">情绪指数</div>
+        <div class="brand-sub">7-Factor · Self-Normalized · No Look-ahead</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="#board">看板</a>
+      <a href="#matrix">指标矩阵</a>
+      <a href="#dip">抄底</a>
+      <a href="#detail">拆解</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ============ BOARD ============ -->
+  <section id="board" class="wrap section top">
+    <div class="sec-head">
+      <div><h2>情绪看板</h2>
+        <p class="sec-sub">Multi = 7 因子合成（0–100）· 52W = greedyfear 口径（价格在 52 周区间位置）· Δ = Multi − 52W</p></div>
+      <div class="legend">
+        <span><i class="sw sw-ef"></i>0–20</span><span><i class="sw sw-f"></i>20–40</span>
+        <span><i class="sw sw-n"></i>40–60</span><span><i class="sw sw-g"></i>60–80</span>
+        <span><i class="sw sw-eg"></i>80–100</span>
+      </div>
+    </div>
+    <div id="cards" class="cards">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+  </section>
+
+  <!-- ============ MATRIX ============ -->
+  <section id="matrix" class="wrap section">
+    <div class="sec-head">
+      <div><h2>指标矩阵</h2>
+        <p class="sec-sub">点列名排序 · 点下方标签隐藏/显示指标 · 分位类单元格按 0（恐慌）→100（贪婪）着色</p></div>
+      <div class="chips">
+        <button class="chip" id="mxAll">全选</button>
+        <button class="chip" id="mxCore">核心</button>
+        <button class="chip" id="mxFac">因子</button>
+      </div>
+    </div>
+    <div class="card">
+      <div id="mxToggles" class="toggles"></div>
+      <div id="mxTable" class="dtbl"></div>
+      <div class="legend-row" id="mxLegend"></div>
+    </div>
+  </section>
+
+  <!-- ============ DIP ============ -->
+  <section id="dip" class="wrap section">
+    <div class="sec-head">
+      <div><h2>抄底提示</h2>
+        <p class="sec-sub">规则 = 首次触及 252 日高点回撤档位当天买入 · 阶梯：-8%→20%、-12%→40%、-20%→65%、-25%→100%</p></div>
+      <div class="chips"><span class="chip static" id="dipAsOf">—</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">当前红绿灯</div>
+        <div class="card-sub" id="dipSub">新鲜度 ≤10 交易日内触发才算可执行</div></div>
+      <div id="dipTable" class="dtbl"></div>
+      <div class="callout tight" id="dipNote"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">规则回测（10 标的 · 2020–2026 · 未来 N 交易日）</div>
+        <div class="card-sub" id="ruleSub">EXC = 相对同期无条件基线的超额（pp）· MDD = 入场后 60 日内平均最大浮亏</div></div>
+      <div id="ruleTable" class="dtbl"></div>
+      <div class="callout tight" id="ruleNote"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">历史触发 · <span id="epSym">—</span></div>
+        <div class="card-sub">跟随「拆解」选中标的</div></div>
+      <div id="epTable" class="dtbl"></div>
+    </div>
+  </section>
+
+  <!-- ============ DETAIL ============ -->
+  <section id="detail" class="wrap section">
+    <div class="sec-head">
+      <div><h2>个股拆解</h2>
+        <p class="sec-sub">因子分位 = 该因子原始值在本标的过去 504 交易日分布中的百分位</p></div>
+      <div class="tabs" id="symTabs"></div>
+    </div>
+
+    <div class="detail-grid three">
+      <div class="card glow">
+        <div class="card-head">
+          <div><div class="card-title" id="gaugeSym">加载中…</div>
+            <div class="card-sub" id="gaugeName">&nbsp;</div></div>
+          <select id="gaugePick" class="select"></select>
+        </div>
+        <div id="gauge" class="gauge-box"></div>
+        <div class="vs-row" id="vsRow"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">因子分解</div>
+          <div class="card-sub" id="facHint">悬停看原始值</div></div>
+        <div id="facBars" class="facbars"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">雷达</div>
+          <div class="card-sub">外圈 = 贪婪</div></div>
+        <div id="radar" class="chart-md"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div><div class="card-title">Multi vs 52W vs 收盘价</div>
+        <div class="card-sub" id="histSub">&nbsp;</div></div>
+        <div class="chips" id="rangeChips">
+          <button class="chip" data-d="180">6M</button>
+          <button class="chip active" data-d="380">1.5Y</button>
+          <button class="chip" data-d="900">3Y</button>
+          <button class="chip" data-d="0">全部</button>
+          <div class="dr">
+            <input type="date" id="dFrom" class="dinp" title="起始日期">
+            <span class="dsep">→</span>
+            <input type="date" id="dTo" class="dinp" title="结束日期">
+            <button class="chip chip-go" id="dApply">应用</button>
+            <button class="chip chip-go" id="dReset" title="回到预设区间">重置</button>
+          </div>
+        </div>
+      </div>
+      <div id="histChart" class="chart-lg"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">因子分位热力图</div>
+        <div class="card-sub">红 = 恐慌，绿 = 贪婪</div></div>
+      <div id="heat" class="chart-lg"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>Yahoo Finance 日线 · 基准 SPY · 口径 <b id="srcMode">—</b> · 截止 <b id="asOf">—</b>
+      · SKHY 历史用 000660.KS（KRW）</span>
+    <span class="foot-r">非投资建议 · <a id="apiLink" href="#" target="_blank" rel="noopener">原始 JSON</a></span>
+  </div>
+</footer>
+
+<div id="tip" class="tip"></div>
+<script src="vendor/echarts.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

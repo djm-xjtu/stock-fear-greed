@@ -1,0 +1,6 @@
+{
+    "app_name": "frontend",
+    "app_description": "个股情绪指数实验室：多因子 Fear & Greed 指数",
+    "capabilities": [],
+    "datasources": {}
+}
