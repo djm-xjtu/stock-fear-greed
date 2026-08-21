@@ -2,7 +2,7 @@
 
 用 7 个互补因子重建**个股级别**的恐慌/贪婪指数，并把「什么时候抄底」做成可回测的规则表。
 
-线上 Demo（纯静态，数据随页面打包）：`frontend/` 目录直接部署即可。
+线上 Demo：**https://djm-xjtu.github.io/stock-fear-greed/** （纯静态，数据随页面打包，`gh-pages` 分支）
 
 ![sections](https://img.shields.io/badge/sections-看板%20·%20指标矩阵%20·%20抄底%20·%20拆解-6ea8fe)
 
