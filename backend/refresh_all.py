@@ -13,6 +13,7 @@ import datetime as dt
 import glob
 import gzip
 import json
+import math
 import os
 import re
 import subprocess
@@ -32,6 +33,14 @@ BATCH = 4
 LOOKBACK_DAYS = 400          # 只需补最近增量，历史由快照提供
 
 
+def _finite_number(v):
+    try:
+        return math.isfinite(float(v))
+    except (TypeError, ValueError):
+        return False
+
+
+
 def fetch_yf(tickers, start, end):
     """用 yfinance 包拉日线，返回 {ticker: [{date,open,high,low,close,volume}, ...]}。"""
     try:
@@ -48,11 +57,14 @@ def fetch_yf(tickers, start, end):
             continue
         rows = []
         for ts, r in df.iterrows():
-            if r.get("Close") is None:
+            price_cols = (r.get("Open"), r.get("High"), r.get("Low"), r.get("Close"))
+            if not all(_finite_number(v) for v in price_cols):
                 continue
-            rows.append({"date": ts.strftime("%Y-%m-%d"), "open": r["Open"],
-                         "high": r["High"], "low": r["Low"], "close": r["Close"],
-                         "volume": r.get("Volume") or 0})
+            volume = r.get("Volume")
+            rows.append({"date": ts.strftime("%Y-%m-%d"), "open": float(r["Open"]),
+                         "high": float(r["High"]), "low": float(r["Low"]),
+                         "close": float(r["Close"]),
+                         "volume": float(volume) if _finite_number(volume) else 0.0})
         if rows:
             out[t.upper()] = rows
     return out or None
@@ -82,9 +94,13 @@ def merge(sym, rows):
     added = 0
     for r in rows:
         d = r["date"]
-        vals = (round(float(r["open"]), 4), round(float(r["high"]), 4),
-                round(float(r["low"]), 4), round(float(r["close"]), 4),
-                float(r["volume"] or 0))
+        vals = (float(r["open"]), float(r["high"]), float(r["low"]),
+                float(r["close"]), float(r.get("volume") or 0.0))
+        if not all(_finite_number(v) for v in vals[:4]):
+            continue
+        volume = vals[4] if _finite_number(vals[4]) else 0.0
+        vals = (round(vals[0], 4), round(vals[1], 4), round(vals[2], 4),
+                round(vals[3], 4), volume)
         if d in idx:
             i = idx[d]
             b["o"][i], b["h"][i], b["l"][i], b["c"][i], b["v"][i] = vals
