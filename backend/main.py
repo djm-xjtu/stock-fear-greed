@@ -25,7 +25,7 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
 BENCHMARK = "SPY"
 DEFAULT_UNIVERSE = ["QQQ", "SOXX", "TSM", "NVDA", "SKHY", "AVGO", "ANET", "MU",
-                    "GOOGL", "META"]
+                    "GOOGL", "META", "GLD"]
 
 NAME_MAP = {
     "QQQ": "Invesco QQQ Trust · 纳指100",
@@ -38,6 +38,7 @@ NAME_MAP = {
     "MU": "美光科技 Micron",
     "GOOGL": "Alphabet（谷歌）",
     "META": "Meta Platforms",
+    "GLD": "SPDR Gold Shares · 黄金ETF",
     "SPY": "SPDR S&P 500 ETF Trust",
 }
 

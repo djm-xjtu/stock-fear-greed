@@ -27,7 +27,7 @@ MCP = os.path.join(ROOT, "inner_skills", "yfinance",
 
 # 展示 ticker -> 数据源 ticker（SK hynix 美股 SKHY 上市太晚，历史用韩股主上市）
 SYMBOLS = ["SPY", "QQQ", "SOXX", "TSM", "NVDA", "SKHY", "AVGO", "ANET", "MU",
-           "GOOGL", "META"]
+           "GOOGL", "META", "GLD"]
 SOURCE = {"SKHY": "000660.KS"}
 BATCH = 4
 LOOKBACK_DAYS = 400          # 只需补最近增量，历史由快照提供

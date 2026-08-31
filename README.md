@@ -47,7 +47,7 @@ score = round((price - low52) / (high52 - low52) * 100)
 
 ## 标的池
 
-QQQ、SOXX、TSM、NVDA、SKHY、AVGO、ANET、MU、GOOGL、META（SPY 仅作相对强度基准）。
+QQQ、SOXX、TSM、NVDA、SKHY、AVGO、ANET、MU、GOOGL、META、GLD（SPY 仅作相对强度基准）。
 
 > SKHY（SK hynix）美股上市时间过短，历史序列采用韩股主上市 `000660.KS`（KRW 计价，交易日与美股不完全重叠）。
 
@@ -100,4 +100,4 @@ cd backend && python3 bootstrap_snapshot.py <yfinance导出的json> [--map 00066
 
 1. 未纳入期权隐含波动率与 put/call 偏斜，情绪的「预期维度」缺失；
 2. 回测为样本内池化统计，未扣交易成本与滑点，未做多重检验；
-3. 10 个标的集中在 AI 算力链且过去 6 年整体强上行，结论不可外推到小盘、周期或下行趋势资产。
+3. 11 个标的中 10 个集中在 AI 算力链（GLD 为黄金 ETF 对照）且过去 6 年整体强上行，结论不可外推到小盘、周期或下行趋势资产。
