@@ -628,7 +628,9 @@ async function boot() {
       el.addEventListener("click", () => select(el.dataset.sym, false)));
     $("#gaugePick").addEventListener("change", (e) => select(e.target.value, false));
 
-    $("#asOf").textContent = u.items[0].as_of;
+    const asOf = u.items[0].as_of;
+    $("#asOf").textContent = asOf;
+    $("#boardAsOf").textContent = "截止 " + asOf;
     $("#srcMode").textContent = state.live ? "实时接口" : "静态快照";
 
     await select(u.items[0].symbol, false);
