@@ -24,12 +24,16 @@ YAHOO_HOSTS = ["https://query1.finance.yahoo.com", "https://query2.finance.yahoo
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
 BENCHMARK = "SPY"
-DEFAULT_UNIVERSE = ["QQQ", "SOXX", "TSM", "NVDA", "SKHY", "AVGO", "ANET", "MU",
-                    "GOOGL", "META", "GLD"]
+DEFAULT_UNIVERSE = ["QQQ", "QLD", "VGT", "SOXX", "SMH", "USD", "TSM", "NVDA",
+                    "SKHY", "AVGO", "ANET", "MU", "GOOGL", "META", "GLD"]
 
 NAME_MAP = {
     "QQQ": "Invesco QQQ Trust · 纳指100",
+    "QLD": "ProShares Ultra QQQ · 2倍做多纳指100",
+    "VGT": "Vanguard Information Technology ETF · 信息技术ETF",
     "SOXX": "iShares Semiconductor ETF · 费半",
+    "SMH": "VanEck Semiconductor ETF · 半导体ETF",
+    "USD": "ProShares Ultra Semiconductors · 2倍做多半导体ETF",
     "TSM": "台积电 TSMC ADR",
     "NVDA": "英伟达 NVIDIA",
     "SKHY": "SK hynix（历史用韩股 000660.KS）",
