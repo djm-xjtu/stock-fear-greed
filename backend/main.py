@@ -25,7 +25,8 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
 BENCHMARK = "SPY"
 DEFAULT_UNIVERSE = ["QQQ", "QLD", "VGT", "SOXX", "SMH", "USD", "TSM", "NVDA",
-                    "SKHY", "AVGO", "ANET", "MU", "GOOGL", "META", "GLD"]
+                    "SKHY", "AVGO", "ANET", "MU", "GOOGL", "META", "GLD",
+                    "SLV", "CRWV"]
 
 NAME_MAP = {
     "QQQ": "Invesco QQQ Trust · 纳指100",
@@ -43,6 +44,8 @@ NAME_MAP = {
     "GOOGL": "Alphabet（谷歌）",
     "META": "Meta Platforms",
     "GLD": "SPDR Gold Shares · 黄金ETF",
+    "SLV": "iShares Silver Trust · 白银ETF",
+    "CRWV": "CoreWeave",
     "SPY": "SPDR S&P 500 ETF Trust",
 }
 
@@ -530,4 +533,3 @@ if __name__ == "__main__":
     config = uvicorn.Config("main:app", port=port, log_level="info", host=None)
     server = uvicorn.Server(config)
     server.run()
-

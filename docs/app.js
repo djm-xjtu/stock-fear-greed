@@ -256,6 +256,31 @@ function sliceHist(d) {
   return state.days > 0 ? d.history.slice(-state.days) : d.history;
 }
 
+function syncRangeBounds(d) {
+  const allDates = d.history.map((x) => x.d);
+  state.bounds = [allDates[0], allDates[allDates.length - 1]];
+  const fromEl = $("#dFrom"), toEl = $("#dTo");
+  if (fromEl && toEl) {
+    [fromEl, toEl].forEach((el) => { el.min = state.bounds[0]; el.max = state.bounds[1]; });
+  }
+  if (!state.from || !state.to) return;
+  const a = state.from < state.bounds[0] ? state.bounds[0] : state.from;
+  const b = state.to > state.bounds[1] ? state.bounds[1] : state.to;
+  if (a > b) {
+    state.from = state.to = null;
+    state.days = 380;
+    if (fromEl) fromEl.value = "";
+    if (toEl) toEl.value = "";
+    $('#rangeChips .chip[data-d="380"]')?.classList.add("active");
+    $("#dApply")?.classList.remove("active");
+    return;
+  }
+  state.from = a;
+  state.to = b;
+  if (fromEl) fromEl.value = a;
+  if (toEl) toEl.value = b;
+}
+
 function updateHistSub(h) {
   const base = "灰色为 greedyfear 口径 —— 注意它长期贴顶，几乎不回落";
   const el = $("#histSub");
@@ -603,6 +628,7 @@ async function select(sym, scroll) {
     d = await api("/api/stock/" + sym);
     state.detail[sym] = d;
   }
+  syncRangeBounds(d);
   renderGauge(d);
   renderFactors(d);
   renderHistory(d);
@@ -636,8 +662,6 @@ async function boot() {
     await select(u.items[0].symbol, false);
 
     /* --- 时间区间：预设 chip + 自定义日期 --- */
-    const allDates = state.detail[state.cur].history.map((x) => x.d);
-    state.bounds = [allDates[0], allDates[allDates.length - 1]];
     const fromEl = $("#dFrom"), toEl = $("#dTo");
     [fromEl, toEl].forEach((el) => { el.min = state.bounds[0]; el.max = state.bounds[1]; });
 
